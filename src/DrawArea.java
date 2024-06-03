@@ -3,46 +3,37 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-// Этот класс расширяет JComponent для создания пользовательской области рисования
 public class DrawArea extends JComponent {
     private Image image; // The image to draw on
     private Graphics2D g2; // Graphics object for drawing
     private int currentX, currentY, oldX, oldY; // Variables to track mouse movement
     private ArrayList<Shape> shapes = new ArrayList<>(); // List to store shapes
 
-    // Конструктор
-    public DrawArea() {}
-
-    // Метод для рисования на компоненте
     protected void paintComponent(Graphics g) {
-        // Если изображение не существует, создаем его и инициализируем объект Graphics
         if (image == null) {
-            image = createImage(getSize().width, getSize().height); // Создаем изображение с размером компонента
-            g2 = (Graphics2D) image.getGraphics(); // Получаем объект Graphics из изображения
-            clear(); // Очищаем область рисования
+            image = createImage(getSize().width, getSize().height);
+            g2 = (Graphics2D) image.getGraphics();
+            clear();
         }
-        g.drawImage(image, 0, 0, null); // Отрисовываем изображение на компоненте
+        g.drawImage(image, 0, 0, null);
     }
 
-    // Метод для обработки событий нажатия мыши
     public void mousePressed(MouseEvent e) {
-        oldX = e.getX(); // Получаем координату X нажатия мыши
-        oldY = e.getY(); // Получаем координату Y нажатия мыши
+        oldX = e.getX();
+        oldY = e.getY();
     }
 
-    // Метод для обработки событий перетаскивания мыши
     public void mouseDragged(MouseEvent e, Color currentColor) {
-        currentX = e.getX(); // Получаем текущую координату X при перетаскивании мыши
-        currentY = e.getY(); // Получаем текущую координату Y при перетаскивании мыши
+        currentX = e.getX();
+        currentY = e.getY();
 
-        // Если объект Graphics существует, рисуем линию от старой позиции мыши к текущей
         if (g2 != null) {
             g2.setColor(currentColor);
-            g2.drawLine(oldX, oldY, currentX, currentY); // Рисуем линию от старой до текущей позиции
+            g2.drawLine(oldX, oldY, currentX, currentY);
             shapes.add(new Shape("line", oldX, oldY, currentX, currentY, g2.getColor()));
-            repaint(); // Перерисовываем компонент, чтобы отразить изменения
-            oldX = currentX; // Обновляем старую координату X до текущей координаты X
-            oldY = currentY; // Обновляем старую координату Y до текущей координаты Y
+            repaint();
+            oldX = currentX;
+            oldY = currentY;
         }
     }
     public void drawCircle(int x, int y, Color currentColor) {
@@ -61,19 +52,17 @@ public class DrawArea extends JComponent {
         repaint();
     }
 
-    // Метод для очистки области рисования
     public void clear() {
-        g2.setPaint(Color.white); // Устанавливаем цвет кисти в белый
-        g2.fillRect(0, 0, getSize().width, getSize().height); // Заполняем область рисования белым цветом
-        g2.setPaint(Color.black); // Возвращаем цвет кисти обратно на черный
+        g2.setPaint(Color.white);
+        g2.fillRect(0, 0, getSize().width, getSize().height);
+        g2.setPaint(Color.black);
         shapes.clear();
-        repaint(); // Перерисовываем компонент, чтобы отразить изменения
+        repaint();
     }
 
     public void setShapes(ArrayList<Shape> shapes) {
-        ArrayList<Shape> shapesToDraw = new ArrayList<>(shapes); // Create a copy of shapes
+        ArrayList<Shape> shapesToDraw = new ArrayList<>(shapes);
         for (Shape shape : shapesToDraw) {
-            System.out.println("Shape Type is " + shape.type);
             if (shape.type.equals("rectangle")) {
                 drawSquare(shape.x1, shape.y1, shape.color);
             } else if (shape.type.equals("line")) {
@@ -83,8 +72,6 @@ public class DrawArea extends JComponent {
             }
         }
     }
-
-    // Метод для получения объекта Graphics2D
     public Graphics2D getG2() {
         return g2;
     }
