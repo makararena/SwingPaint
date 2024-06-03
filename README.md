@@ -23,4 +23,4 @@ This is a simple drawing application built in Java Swing. It allows users to dra
 - **Saving and Opening**: Use the "File" menu to save or open drawings.
 - **Clear Canvas**: Click on "Clear" in the "Draw" menu to clear the canva
 
-![Drawing Example](media/Screenshot 2024-06-03 at 13.46.44.png)
+<img alt="Drawing Example" height="500" src="media/Screenshot 2024-06-03 at 13.46.44.png" width="800"/>
