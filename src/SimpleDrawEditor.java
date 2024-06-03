@@ -87,7 +87,9 @@ public class SimpleDrawEditor extends JFrame {
                 saveAsFile();
             }
         });
+
         fileMenu.add(saveAsMenuItem);
+        fileMenu.addSeparator();
 
         JMenuItem quitMenuItem = new JMenuItem("Quit", KeyEvent.VK_Q);
         quitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
