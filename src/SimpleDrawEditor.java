@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -22,7 +24,8 @@ public class SimpleDrawEditor extends JFrame {
     public SimpleDrawEditor() {
         setTitle("Simple Draw"); // Заголовок окна
         setSize(600, 400); // Размер окна
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Закрыть приложение при закрытии окна
+        setResizable(false);
+//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Закрыть приложение при закрытии окна
 
         // Инициализация области рисования с белым фоном
         drawingArea = new DrawArea();
@@ -32,9 +35,9 @@ public class SimpleDrawEditor extends JFrame {
         drawingArea.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (currentDrawMode == DrawMode.CIRCLE) {
-                    drawCircle(e.getX(), e.getY(), getCurrentColor());
+                    drawingArea.drawCircle(e.getX(), e.getY(), getCurrentColor());
                 } else if (currentDrawMode == DrawMode.SQUARE) {
-                    drawSquare(e.getX(), e.getY(), getCurrentColor());
+                    drawingArea.drawSquare(e.getX(), e.getY(), getCurrentColor());
                 } else if (currentDrawMode == DrawMode.PEN) {
                     drawingArea.mousePressed(e);
                 }
@@ -43,7 +46,7 @@ public class SimpleDrawEditor extends JFrame {
         drawingArea.addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
                 if (currentDrawMode == DrawMode.PEN) {
-                    drawingArea.mouseDragged(e);
+                    drawingArea.mouseDragged(e, getCurrentColor());
                 }
             }
         });
@@ -174,7 +177,7 @@ public class SimpleDrawEditor extends JFrame {
         clearMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
         clearMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                clearDrawingArea();
+                drawingArea.clear();
             }
         });
         drawMenu.add(clearMenuItem);
@@ -189,7 +192,7 @@ public class SimpleDrawEditor extends JFrame {
     // Method to open a file
     private void openFile() {
         JFileChooser fileChooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Simple Draw Files", "sdraw");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Simple Draw Files", "txt"); // Change file extension to .txt
         fileChooser.setFileFilter(filter);
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -197,31 +200,63 @@ public class SimpleDrawEditor extends JFrame {
             currentFile = file.getAbsolutePath();
             statusBar.setText("Opened: " + currentFile);
             modified = false;
+            // Implement logic to read file contents and update UI accordingly
+            try {
+                FileInputStream fileInputStream = new FileInputStream(currentFile);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                ArrayList<Shape> shapes = (ArrayList<Shape>) objectInputStream.readObject();
+                objectInputStream.close();
+                drawingArea.setShapes(shapes);
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    // Method to save the current file
+
+
     private void saveFile() {
         if (currentFile == null) {
             saveAsFile();
-            return;
+        } else {
+            // Implement logic to save file here
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(currentFile);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+                objectOutputStream.writeObject(drawingArea.getShapes());
+                objectOutputStream.close();
+                statusBar.setText("Saved: " + currentFile);
+                modified = false;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        // Implement saving file logic here
-        statusBar.setText("Saved: " + currentFile);
-        modified = false;
     }
 
-    // Method to save the current file with a new name
+
     private void saveAsFile() {
         JFileChooser fileChooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Simple Draw Files", "draw");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Simple Draw Files", "txt"); // Change file extension to .txt
         fileChooser.setFileFilter(filter);
-        int returnVal = fileChooser.showSaveDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            currentFile = file.getAbsolutePath();
-            statusBar.setText("Saved As: " + currentFile);
-            modified = false;
+        int returnVal = fileChooser.showSaveDialog(this); // открывает диалоговое окно для сохранения файла
+        if (returnVal == JFileChooser.APPROVE_OPTION) { // если пользователь нажал "ОК"
+            ArrayList<Shape> infoToSave = drawingArea.getShapes(); // получаем список фигур для сохранения
+            File file = fileChooser.getSelectedFile(); // получаем выбранный файл
+            String fileName = file.getAbsolutePath(); // получаем абсолютный путь к файлу
+            if (!fileName.toLowerCase().endsWith(".txt")) { // Check if the file name already ends with .txt
+                fileName += ".txt"; // If not, add .txt extension
+            }
+            currentFile = fileName; // update current file name with the updated file name
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(currentFile); // создаем поток для записи в файл
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream); // создаем объектный поток для сериализации объектов
+                objectOutputStream.writeObject(infoToSave); // Сериализуем и сохраняем список фигур
+                objectOutputStream.close(); // закрываем поток
+                statusBar.setText("Saved As: " + currentFile); // устанавливаем текст в статусной строке
+                modified = false; // файл не изменен
+            } catch (IOException e) {
+                e.printStackTrace(); // печатаем информацию об ошибке
+            }
         }
     }
 
@@ -245,25 +280,6 @@ public class SimpleDrawEditor extends JFrame {
             // Implement handling of the selected color here
             this.setCurrentColor(selectedColor);
         }
-    }
-
-    // Method to clear the drawing area
-    private void clearDrawingArea() {
-        drawingArea.removeAll();
-        drawingArea.repaint();
-        statusBar.setText("Cleared");
-    }
-
-    public void drawCircle(int x, int y, Color currentColor) {
-        Graphics2D g2 = (Graphics2D) getGraphics();
-        g2.setColor(currentColor);
-        g2.fillOval(x - 25, y - 25, 50, 50);
-    }
-
-    public void drawSquare(int x, int y, Color currentColor) {
-        Graphics2D g2 = (Graphics2D) getGraphics();
-        g2.setColor(currentColor);
-        g2.fillRect(x - 25, y - 25, 50, 50);
     }
 
     public void setCurrentColor(Color currentColor) {
