@@ -10,9 +10,8 @@ public class SimpleDrawEditor extends JFrame {
     private final JToolBar toolBar;
     private String currentFile;
     private Color currentColor;
-    private JLabel curInstrumentLabel;
-    private JLabel curFileLabel;
-    private boolean modified;
+    private JLabel curInstrumentLabel = new JLabel("");;
+    private JLabel curFileLabel = new JLabel("New");;
     private enum DrawMode {CIRCLE, SQUARE, PEN}
     private DrawMode currentDrawMode;
 
@@ -23,19 +22,29 @@ public class SimpleDrawEditor extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         drawingArea = new DrawArea();
+        drawingArea.setFocusable(true);
+        drawingArea.requestFocusInWindow();
+
         drawingArea.setBackground(Color.WHITE);
 
         drawingArea.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if (currentDrawMode == DrawMode.CIRCLE) {
-                    drawingArea.drawCircle(e.getX(), e.getY(), getCurrentColor());
-                } else if (currentDrawMode == DrawMode.SQUARE) {
-                    drawingArea.drawSquare(e.getX(), e.getY(), getCurrentColor());
-                } else if (currentDrawMode == DrawMode.PEN) {
-                    drawingArea.mousePressed(e);
+                if (!drawingArea.getDPressed()) {
+                    if (currentDrawMode == DrawMode.CIRCLE) {
+                        drawingArea.drawCircle(e.getX(), e.getY(), getCurrentColor(), true);
+                    } else if (currentDrawMode == DrawMode.SQUARE) {
+                        drawingArea.drawSquare(e.getX(), e.getY(), getCurrentColor(), true);
+                    } else if (currentDrawMode == DrawMode.PEN) {
+                        drawingArea.mousePressed(e);
+                    }
+                    curFileLabel.setText("New");
+                } else {
+                    drawingArea.removeShapeAt(e.getX(), e.getY());
                 }
+                drawingArea.setDPressed(false);
             }
         });
+
         drawingArea.addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
                 if (currentDrawMode == DrawMode.PEN) {
@@ -43,13 +52,26 @@ public class SimpleDrawEditor extends JFrame {
                 }
             }
         });
-        add(drawingArea, BorderLayout.CENTER);
 
+       drawingArea.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_D) {
+                        drawingArea.setDPressed(true);
+                    }
+                }
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_D) {
+                        drawingArea.setDPressed(true);
+                    }
+                }
+            });
+
+        add(drawingArea, BorderLayout.CENTER);
         toolBar = new JToolBar();
         add(toolBar, BorderLayout.PAGE_START);
         JPanel instrumentFilePanel = new JPanel(new BorderLayout());
-        curInstrumentLabel = new JLabel("Puste");
-        curFileLabel = new JLabel("New");
         instrumentFilePanel.add(curInstrumentLabel, BorderLayout.WEST);
         instrumentFilePanel.add(curFileLabel, BorderLayout.EAST);
         add(instrumentFilePanel, BorderLayout.SOUTH);
@@ -59,82 +81,67 @@ public class SimpleDrawEditor extends JFrame {
 
     private void createMenu() {
         JMenuBar menuBar = new JMenuBar();
-
+        // ********* FILE MENU ********* FILE MENU ********* FILE MENU ********* FILE MENU ********* FILE MENU *********
+        // Mnemonics don't working properly (at least not on max)
         JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        fileMenu.addActionListener(e -> fileMenu.setSelected(true));
 
         JMenuItem openMenuItem = new JMenuItem("Open", KeyEvent.VK_O);
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
-        openMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                openFile();
-            }
-        });
+        openMenuItem.addActionListener(e -> openFile());
         fileMenu.add(openMenuItem);
 
         JMenuItem saveMenuItem = new JMenuItem("Save", KeyEvent.VK_S);
         saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-        saveMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                saveFile();
-            }
-        });
+        saveMenuItem.addActionListener(e -> saveFile());
         fileMenu.add(saveMenuItem);
 
         JMenuItem saveAsMenuItem = new JMenuItem("Save As...", KeyEvent.VK_A);
         saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
-        saveAsMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                saveAsFile();
-            }
-        });
+        saveAsMenuItem.addActionListener(e -> saveAsFile());
 
         fileMenu.add(saveAsMenuItem);
         fileMenu.addSeparator();
 
         JMenuItem quitMenuItem = new JMenuItem("Quit", KeyEvent.VK_Q);
         quitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
-        quitMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                quit();
-            }
-        });
+        quitMenuItem.addActionListener(e -> quit());
         fileMenu.add(quitMenuItem);
 
         menuBar.add(fileMenu);
 
+        // ********* DRAW MENU ********* DRAW MENU ********* DRAW MENU ********* DRAW MENU ********* DRAW MENU *********
+
+        // Mnemonics don't working properly (at least not on max)
         JMenu drawMenu = new JMenu("Draw");
         drawMenu.setMnemonic(KeyEvent.VK_D);
+        drawMenu.addActionListener(e -> drawMenu.setSelected(true));
 
         JMenu figureSubMenu = new JMenu("Figure");
         figureSubMenu.setMnemonic(KeyEvent.VK_F);
 
         JMenuItem circleMenuItem = new JMenuItem("Circle");
         circleMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
-        circleMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                currentDrawMode = DrawMode.CIRCLE;
-                curInstrumentLabel.setText("Drawing: Circle");
-            }
+        circleMenuItem.addActionListener(e -> {
+            currentDrawMode = DrawMode.CIRCLE;
+            curInstrumentLabel.setText("Circle");
         });
         figureSubMenu.add(circleMenuItem);
 
         JMenuItem squareMenuItem = new JMenuItem("Square");
         squareMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
-        squareMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                currentDrawMode = DrawMode.SQUARE;
-                curInstrumentLabel.setText("Drawing: Square");
-            }
+        squareMenuItem.addActionListener(e -> {
+            currentDrawMode = DrawMode.SQUARE;
+            curInstrumentLabel.setText("Square");
         });
         figureSubMenu.add(squareMenuItem);
 
         JMenuItem penMenuItem = new JMenuItem("Pen");
         penMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
-        penMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                currentDrawMode = DrawMode.PEN;
-                curInstrumentLabel.setText("Drawing: Pen");
-            }
+        penMenuItem.addActionListener(e -> {
+            currentDrawMode = DrawMode.PEN;
+            curInstrumentLabel.setText("Pen");
         });
         figureSubMenu.add(penMenuItem);
 
@@ -145,19 +152,14 @@ public class SimpleDrawEditor extends JFrame {
 
         JMenuItem colorMenuItem = new JMenuItem("Color");
         colorMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
-        colorMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                chooseColor();
-            }
-        });
+        colorMenuItem.addActionListener(e -> chooseColor());
         drawMenu.add(colorMenuItem);
 
         JMenuItem clearMenuItem = new JMenuItem("Clear");
         clearMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
-        clearMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                drawingArea.clear();
-            }
+        clearMenuItem.addActionListener(e -> {
+            drawingArea.clear();
+            drawingArea.getShapes().clear();
         });
         drawMenu.add(clearMenuItem);
 
@@ -165,6 +167,8 @@ public class SimpleDrawEditor extends JFrame {
 
         setJMenuBar(menuBar);
     }
+
+    // ********* HELPER FUNCTIONS ********* HELPER FUNCTIONS ********* HELPER FUNCTIONS ********* HELPER FUNCTIONS *********
 
     private void openFile() {
         JFileChooser fileChooser = new JFileChooser();
@@ -174,7 +178,6 @@ public class SimpleDrawEditor extends JFrame {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             currentFile = file.getAbsolutePath();
-            modified = false;
             try {
                 FileInputStream fileInputStream = new FileInputStream(currentFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -182,6 +185,7 @@ public class SimpleDrawEditor extends JFrame {
                 objectInputStream.close();
                 drawingArea.setShapes(shapes);
                 setTitle("Simple Draw: " + file.getName());
+                curFileLabel.setText("Saved");
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -198,7 +202,6 @@ public class SimpleDrawEditor extends JFrame {
                 objectOutputStream.writeObject(drawingArea.getShapes());
                 objectOutputStream.close();
                 curFileLabel.setText("Saved");
-                modified = false;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -225,7 +228,6 @@ public class SimpleDrawEditor extends JFrame {
                 objectOutputStream.writeObject(infoToSave);
                 objectOutputStream.close();
                 curFileLabel.setText("Saved");
-                modified = false;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -233,7 +235,7 @@ public class SimpleDrawEditor extends JFrame {
     }
 
     private void quit() {
-        if (modified) {
+        if (curFileLabel.getText().equals("New")) {
             int option = JOptionPane.showConfirmDialog(this, "Do you want to save changes before quitting?", "Quit", JOptionPane.YES_NO_CANCEL_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 saveFile();

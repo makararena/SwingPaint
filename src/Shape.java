@@ -1,17 +1,32 @@
 import java.awt.*;
 import java.io.Serializable;
 
-class Shape implements Serializable{
+public abstract class Shape implements Serializable{
     String type;
-    int x1, y1, x2, y2;
+    int curX, curY;
     Color color;
 
-    Shape(String type, int x1, int y1, int x2, int y2, Color color) {
+    public Shape(String type, int curX, int curY, Color color) {
         this.type = type;
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+        this.curX = curX;
+        this.curY = curY;
         this.color = color;
+    }
+    public abstract boolean contains(int x, int y);
+
+    public int getCurY() {
+        return curY;
+    }
+
+    public int getCurX() {
+        return curX;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public String getType() {
+        return type;
     }
 }
