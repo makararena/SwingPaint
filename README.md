@@ -22,3 +22,4 @@ This is a simple drawing application built in Java Swing. It allows users to dra
 - **Color Selection**: Choose a color from the "Draw" menu to change the drawing color.
 - **Saving and Opening**: Use the "File" menu to save or open drawings.
 - **Clear Canvas**: Click on "Clear" in the "Draw" menu to clear the canva
+
