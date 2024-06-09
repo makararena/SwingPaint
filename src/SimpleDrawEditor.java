@@ -26,9 +26,8 @@ public class SimpleDrawEditor extends JFrame {
         drawingArea = new DrawArea();
         drawingArea.setFocusable(true);
         drawingArea.requestFocusInWindow();
-
         drawingArea.setBackground(Color.WHITE);
-
+        // Main method to paint circles, squares, and lines
         drawingArea.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (!drawingArea.getDPressed()) {
@@ -47,6 +46,8 @@ public class SimpleDrawEditor extends JFrame {
             }
         });
 
+        // Helper function to draw lines correctly(we need to track everything)
+        // + get current mouse coordinates to be able to add shapes where our mouse is
         drawingArea.addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
                 if (currentDrawMode == DrawMode.PEN) {
@@ -59,7 +60,7 @@ public class SimpleDrawEditor extends JFrame {
                 mouseY = e.getY();
             }
         });
-
+        // We need to track "D" button to be able to delete shapes when it's pressed
        drawingArea.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
@@ -75,6 +76,7 @@ public class SimpleDrawEditor extends JFrame {
                 }
             });
 
+       // Main method to track "Z" button to add shapes with random colors
         drawingArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -91,29 +93,23 @@ public class SimpleDrawEditor extends JFrame {
                     }
                 }
             }
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_Z) {
-                    drawingArea.setZPressed(false);
-                }
-            }
         });
-
         add(drawingArea, BorderLayout.CENTER);
+
+        // Bottom toolbar to show user current file and instrument
         toolBar = new JToolBar();
         add(toolBar, BorderLayout.PAGE_START);
         JPanel instrumentFilePanel = new JPanel(new BorderLayout());
         instrumentFilePanel.add(curInstrumentLabel, BorderLayout.WEST);
         instrumentFilePanel.add(curFileLabel, BorderLayout.EAST);
         add(instrumentFilePanel, BorderLayout.SOUTH);
-
         createMenu();
     }
 
     private void createMenu() {
-        JMenuBar menuBar = new JMenuBar();
         // ********* FILE MENU ********* FILE MENU ********* FILE MENU ********* FILE MENU ********* FILE MENU *********
-        // Mnemonics don't working properly (at least not on max)
+        JMenuBar menuBar = new JMenuBar();
+
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         fileMenu.addActionListener(e -> fileMenu.setSelected(true));
@@ -209,10 +205,12 @@ public class SimpleDrawEditor extends JFrame {
             File file = fileChooser.getSelectedFile();
             currentFile = file.getAbsolutePath();
             try {
+                // https://www.if.pw.edu.pl/~ertman/pojava/?Laboratorium_4:Odczyt_z_pliku_-_klasa_FileInputStream
                 FileInputStream fileInputStream = new FileInputStream(currentFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 ArrayList<Shape> shapes = (ArrayList<Shape>) objectInputStream.readObject();
                 objectInputStream.close();
+                // Draw everything once again
                 drawingArea.setShapes(shapes);
                 setTitle("Simple Draw: " + file.getName());
                 curFileLabel.setText("Saved");
@@ -227,6 +225,7 @@ public class SimpleDrawEditor extends JFrame {
             saveAsFile();
         } else {
             try {
+                // https://www.tutorialspoint.com/java/io/objectoutputstream_writeobject.htm
                 FileOutputStream fileOutputStream = new FileOutputStream(currentFile);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 objectOutputStream.writeObject(drawingArea.getShapes());
@@ -253,6 +252,7 @@ public class SimpleDrawEditor extends JFrame {
             currentFile = fileName;
             setTitle("Simple Draw: " + file.getName());
             try {
+                // https://www.tutorialspoint.com/java/io/objectoutputstream_writeobject.htm
                 FileOutputStream fileOutputStream = new FileOutputStream(currentFile);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 objectOutputStream.writeObject(infoToSave);

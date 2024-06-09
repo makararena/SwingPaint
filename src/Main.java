@@ -4,4 +4,4 @@ public class Main {
 public static void main(String[] args) {
     SwingUtilities.invokeLater(() -> new SimpleDrawEditor().setVisible(true));
     }
-}22
+}

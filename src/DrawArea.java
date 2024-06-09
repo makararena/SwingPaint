@@ -9,7 +9,6 @@ public class DrawArea extends JComponent {
     private int curX, curY, oldX, oldY; // Variables to track mouse movement
     private ArrayList<Shape> shapes = new ArrayList<>(); // List to store shapes
     private boolean dPressed = false;
-    private boolean zPressed = false;
 
     protected void paintComponent(Graphics g) {
         if (image == null) {
@@ -113,12 +112,5 @@ public class DrawArea extends JComponent {
 
     public void setDPressed(boolean dPressed) {
         this.dPressed = dPressed;
-    }
-    public boolean getZPressed() {
-        return zPressed;
-    }
-
-    public void setZPressed(boolean zPressed) {
-        this.zPressed = zPressed;
     }
 }

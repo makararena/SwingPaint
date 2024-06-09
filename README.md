@@ -21,6 +21,26 @@ This is a simple drawing application built in Java Swing. It allows users to dra
 - **Drawing**: Select the desired shape from the "Draw" menu and start drawing on the canvas.
 - **Color Selection**: Choose a color from the "Draw" menu to change the drawing color.
 - **Saving and Opening**: Use the "File" menu to save or open drawings.
-- **Clear Canvas**: Click on "Clear" in the "Draw" menu to clear the canva
+- **Clear Canvas**: Click on "Clear" in the "Draw" menu to clear the canvas.
 
-<img alt="Drawing Example" height="500" src="media/Screenshot 2024-06-03 at 13.46.44.png" width="800"/>
+## Example
+
+<img alt="Drawing Example" height="500" src="media/Screenshot 2024-06-09 at 14.33.50.png" width="800"/>
+
+## Code Overview
+
+### `SimpleDrawEditor.java`
+
+This class is the main class of the application. It contains the GUI elements and handles user interactions. Features include drawing shapes, selecting colors, saving/opening drawings, and clearing the canvas.
+
+### `DrawArea.java`
+
+This class represents the drawing area where shapes are drawn. It handles mouse events for drawing shapes, clearing the canvas, and selecting and deleting shapes.
+
+### `Shape.java`, `Line.java`, `Circle.java`, `Rectangle.java`
+
+These classes represent the shapes that can be drawn on the canvas. They contain information about the shape's type, position, color, and methods for checking if a point is contained within the shape.
+
+## Dependencies
+
+This project has no external dependencies other than Java Swing, which is included in the Java Development Kit (JDK).

@@ -7,18 +7,10 @@ public class Rectangle extends Shape{
         super("rectangle", curX, curY, color);
     }
 
+    // Check if the point (x, y) is within the bounds of the rectangle
     @Override
     public boolean contains(int x, int y) {
-        // Check if the point (x, y) is within the bounds of the rectangle
         return (x >= super.getCurX() && x <= super.getCurX() + width &&
                 y >= super.getCurY() && y <= super.getCurY() + height);
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 }
