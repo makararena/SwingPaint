@@ -38,7 +38,7 @@ public class SimpleDrawEditor extends JFrame {
                     } else if (currentDrawMode == DrawMode.PEN) {
                         drawingArea.mousePressed(e);
                     }
-                    curFileLabel.setText("New");
+                    curFileLabel.setText("Modified");
                 } else {
                     drawingArea.removeShapeAt(e.getX(), e.getY());
                 }
@@ -186,6 +186,7 @@ public class SimpleDrawEditor extends JFrame {
         clearMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
         clearMenuItem.addActionListener(e -> {
             drawingArea.clear();
+            curFileLabel.setText("New");
             drawingArea.getShapes().clear();
         });
 
@@ -265,7 +266,7 @@ public class SimpleDrawEditor extends JFrame {
     }
 
     private void quit() {
-        if (curFileLabel.getText().equals("New")) {
+        if (curFileLabel.getText().equals("Modified")) {
             int option = JOptionPane.showConfirmDialog(this, "Do you want to save changes before quitting?", "Quit", JOptionPane.YES_NO_CANCEL_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 saveFile();

@@ -4,10 +4,10 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class DrawArea extends JComponent {
-    private Image image; // The image to draw on
-    private Graphics2D g2; // Graphics object for drawing
-    private int curX, curY, oldX, oldY; // Variables to track mouse movement
-    private ArrayList<Shape> shapes = new ArrayList<>(); // List to store shapes
+    private Image image;
+    private Graphics2D g2;
+    private int curX, curY, oldX, oldY;
+    private ArrayList<Shape> shapes = new ArrayList<>();
     private boolean dPressed = false;
 
     protected void paintComponent(Graphics g) {

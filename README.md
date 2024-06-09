@@ -25,7 +25,7 @@ This is a simple drawing application built in Java Swing. It allows users to dra
 
 ## Example
 
-<img alt="Drawing Example" height="500" src="media/Screenshot 2024-06-09 at 14.33.50.png" width="800"/>
+<img alt="Drawing Example" height="500" src="media/Screenshot 2024-06-09 at 14.49.47.png" width="800"/>
 
 ## Code Overview
 
