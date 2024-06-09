@@ -14,6 +14,8 @@ public class SimpleDrawEditor extends JFrame {
     private JLabel curFileLabel = new JLabel("New");;
     private enum DrawMode {CIRCLE, SQUARE, PEN}
     private DrawMode currentDrawMode;
+    private int mouseX;
+    private int mouseY;
 
     public SimpleDrawEditor() {
         setTitle("Simple Draw");
@@ -51,6 +53,11 @@ public class SimpleDrawEditor extends JFrame {
                     drawingArea.mouseDragged(e, getCurrentColor());
                 }
             }
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mouseX = e.getX();
+                mouseY = e.getY();
+            }
         });
 
        drawingArea.addKeyListener(new KeyAdapter() {
@@ -63,10 +70,34 @@ public class SimpleDrawEditor extends JFrame {
                 @Override
                 public void keyReleased(KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_D) {
-                        drawingArea.setDPressed(true);
+                        drawingArea.setDPressed(false);
                     }
                 }
             });
+
+        drawingArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_Z) {
+                    int red = (int) (Math.random() * 256);
+                    int green = (int) (Math.random() * 256);
+                    int blue = (int) (Math.random() * 256);
+                    Color randomColor = new Color(red, green, blue);
+                    if (currentDrawMode == DrawMode.CIRCLE){
+                        drawingArea.drawCircle(getMouseX(), getMouseY(), randomColor, true);
+                    }
+                    if (currentDrawMode == DrawMode.SQUARE){
+                        drawingArea.drawSquare(getMouseX(), getMouseY(), randomColor, true);
+                    }
+                }
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_Z) {
+                    drawingArea.setZPressed(false);
+                }
+            }
+        });
 
         add(drawingArea, BorderLayout.CENTER);
         toolBar = new JToolBar();
@@ -161,10 +192,9 @@ public class SimpleDrawEditor extends JFrame {
             drawingArea.clear();
             drawingArea.getShapes().clear();
         });
+
         drawMenu.add(clearMenuItem);
-
         menuBar.add(drawMenu);
-
         setJMenuBar(menuBar);
     }
 
@@ -259,5 +289,13 @@ public class SimpleDrawEditor extends JFrame {
 
     public Color getCurrentColor() {
         return currentColor;
+    }
+
+    public int getMouseX() {
+        return mouseX;
+    }
+
+    public int getMouseY() {
+        return mouseY;
     }
 }

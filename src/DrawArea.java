@@ -9,6 +9,7 @@ public class DrawArea extends JComponent {
     private int curX, curY, oldX, oldY; // Variables to track mouse movement
     private ArrayList<Shape> shapes = new ArrayList<>(); // List to store shapes
     private boolean dPressed = false;
+    private boolean zPressed = false;
 
     protected void paintComponent(Graphics g) {
         if (image == null) {
@@ -31,7 +32,7 @@ public class DrawArea extends JComponent {
         if (g2 != null) {
             g2.setColor(currentColor);
             g2.drawLine(oldX, oldY, curX, curY);
-            shapes.add(new Line(oldX, oldY, curX, curY, g2.getColor()));
+            shapes.add(new Line(oldX, oldY, curX, curY, g2.getColor())); // Store each segment as a Line
             repaint();
             oldX = curX;
             oldY = curY;
@@ -63,12 +64,12 @@ public class DrawArea extends JComponent {
 
     public void setShapes(ArrayList<Shape> shapes) {
         clear();
-        ArrayList<Shape> shapesCopy = new ArrayList<>(shapes);
-        for (Shape shape : shapesCopy) {
+        for (Shape shape : shapes) {
             switch (shape.getType()) {
                 case "line":
                     Line line = (Line) shape;
-                    g2.drawLine(line.getOldX(), line.getOldY(), line.getCurX(), line.getCurY());
+                    g2.setColor(line.getColor());
+                    g2.drawLine(line.getOldX(), line.getOldY(), line.getCurX(), line.getCurY()); // Restore Line with its color
                     break;
                 case "circle":
                     Circle circle = (Circle) shape;
@@ -80,6 +81,7 @@ public class DrawArea extends JComponent {
                     break;
             }
         }
+        this.shapes = new ArrayList<>(shapes);
     }
 
     public Graphics2D getG2() {
@@ -102,7 +104,7 @@ public class DrawArea extends JComponent {
                 }
             }
         }
-        dPressed=false;
+        dPressed = false;
     }
 
     public boolean getDPressed() {
@@ -112,5 +114,11 @@ public class DrawArea extends JComponent {
     public void setDPressed(boolean dPressed) {
         this.dPressed = dPressed;
     }
+    public boolean getZPressed() {
+        return zPressed;
+    }
 
+    public void setZPressed(boolean zPressed) {
+        this.zPressed = zPressed;
+    }
 }
