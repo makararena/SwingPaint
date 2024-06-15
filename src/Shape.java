@@ -3,7 +3,7 @@ import java.io.Serializable;
 
 
 // https://stackoverflow.com/questions/4548816/when-should-we-implement-serializable-interface
-public abstract class Shape implements Serializable{
+public abstract class Shape implements Serializable {
     String type;
     int curX, curY;
     Color color;

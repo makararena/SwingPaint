@@ -107,6 +107,7 @@ public class SimpleDrawEditor extends JFrame {
     }
 
     private void createMenu() {
+
         // ********* FILE MENU ********* FILE MENU ********* FILE MENU ********* FILE MENU ********* FILE MENU *********
         JMenuBar menuBar = new JMenuBar();
 
@@ -206,6 +207,7 @@ public class SimpleDrawEditor extends JFrame {
             File file = fileChooser.getSelectedFile();
             currentFile = file.getAbsolutePath();
             try {
+                // https://www.youtube.com/watch?v=7lHv_Dh2Hz4
                 // https://www.if.pw.edu.pl/~ertman/pojava/?Laboratorium_4:Odczyt_z_pliku_-_klasa_FileInputStream
                 FileInputStream fileInputStream = new FileInputStream(currentFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -226,7 +228,8 @@ public class SimpleDrawEditor extends JFrame {
             saveAsFile();
         } else {
             try {
-                // https://www.tutorialspoint.com/java/io/objectoutputstream_writeobject.htm
+                // https://www.youtube.com/watch?v=7lHv_Dh2Hz4
+                // https://www.if.pw.edu.pl/~ertman/pojava/?Laboratorium_4:Odczyt_z_pliku_-_klasa_FileInputStream
                 FileOutputStream fileOutputStream = new FileOutputStream(currentFile);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 objectOutputStream.writeObject(drawingArea.getShapes());
@@ -253,7 +256,8 @@ public class SimpleDrawEditor extends JFrame {
             currentFile = fileName;
             setTitle("Simple Draw: " + file.getName());
             try {
-                // https://www.tutorialspoint.com/java/io/objectoutputstream_writeobject.htm
+                // https://www.youtube.com/watch?v=7lHv_Dh2Hz4
+                // https://www.if.pw.edu.pl/~ertman/pojava/?Laboratorium_4:Odczyt_z_pliku_-_klasa_FileInputStream
                 FileOutputStream fileOutputStream = new FileOutputStream(currentFile);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 objectOutputStream.writeObject(infoToSave);
