@@ -9,6 +9,7 @@ public class Circle extends Shape {
     }
 
     // Check if the point (x, y) is within the bounds of the circle
+    // https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
     @Override
     public boolean contains(int x, int y) {
         int radius = DIAMETER / 2;

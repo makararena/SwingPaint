@@ -14,6 +14,7 @@ public abstract class Shape implements Serializable {
         this.curY = curY;
         this.color = color;
     }
+
     public abstract boolean contains(int x, int y);
 
     public int getCurY() {

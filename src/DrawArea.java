@@ -27,11 +27,11 @@ public class DrawArea extends JComponent {
     public void mouseDragged(MouseEvent e, Color currentColor) {
         curX = e.getX();
         curY = e.getY();
-
         if (g2 != null) {
             g2.setColor(currentColor);
             g2.drawLine(oldX, oldY, curX, curY);
-            shapes.add(new Line(oldX, oldY, curX, curY, g2.getColor())); // Store each segment as a Line
+            // Store each segment in a line
+            shapes.add(new Line(oldX, oldY, curX, curY, g2.getColor()));
             repaint();
             oldX = curX;
             oldY = curY;
@@ -57,7 +57,6 @@ public class DrawArea extends JComponent {
         g2.setPaint(Color.white);
         g2.fillRect(0, 0, getSize().width, getSize().height);
         g2.setPaint(Color.black);
-
         repaint();
     }
 

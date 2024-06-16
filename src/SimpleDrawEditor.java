@@ -27,6 +27,7 @@ public class SimpleDrawEditor extends JFrame {
         drawingArea.setFocusable(true);
         drawingArea.requestFocusInWindow();
         drawingArea.setBackground(Color.WHITE);
+
         // Main method to paint circles, squares, and lines
         drawingArea.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -186,8 +187,10 @@ public class SimpleDrawEditor extends JFrame {
         JMenuItem clearMenuItem = new JMenuItem("Clear");
         clearMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
         clearMenuItem.addActionListener(e -> {
+            // Clear drawing area
             drawingArea.clear();
             curFileLabel.setText("New");
+            // Clear shapes variable
             drawingArea.getShapes().clear();
         });
 
